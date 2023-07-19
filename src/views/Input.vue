@@ -1,4 +1,8 @@
 <script setup>
+import {useTableStore} from '../store/index.js'
+import {useRoute} from 'vue-router'
+let store = useTableStore()
+const route=useRoute()
 import {reactive} from 'vue'
 
     const options = [
@@ -15,7 +19,7 @@ import {reactive} from 'vue'
     label: '部门3',
   },
 ]
-  const form = reactive({
+  let form = reactive({
     name: '',
     birth: '',
     sex: '',
@@ -27,7 +31,11 @@ import {reactive} from 'vue'
     department:'',
     position:''
 })
-
+  const onSubmit = ()=>{
+    store.onSubmit(form)
+    }
+//   const index = +route.query.index
+//   form = {...store.tableData[index]}
 </script>
 
 <template>
@@ -94,6 +102,10 @@ import {reactive} from 'vue'
             </el-form-item>
             <el-form-item label="职位" >
                 <el-input v-model="form.position"/>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="onSubmit">Create</el-button>
+                <el-button>Cancel</el-button>
             </el-form-item>
         </el-form>
     </el-card>

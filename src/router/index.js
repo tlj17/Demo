@@ -18,6 +18,11 @@ const router = createRouter({
           name:'tablelist',
           component:()=> import('../views/TableList.vue')
         },
+        {
+          path:'/view/:index',
+          name:'view',
+          component:()=> import('../views/View.vue')
+        },
       ]
     },
     
