@@ -11,7 +11,8 @@ const router = createRouter({
         {
           path:'/input',
           name:'input',
-          component:()=> import('../views/Input.vue')
+          component:()=> import('../views/Input.vue'),
+          props:true
         },
         {
           path:'/tablelist',

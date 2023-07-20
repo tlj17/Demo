@@ -1,10 +1,11 @@
 <script setup>
-import {useTableStore} from '../store/index.js'
-import {useRoute} from 'vue-router'
-let store = useTableStore()
-const route=useRoute()
-import {reactive} from 'vue'
+    import {useTableStore} from '../store/index.js'
+    import {useRoute} from 'vue-router'
+    let store = useTableStore()
+    const route=useRoute()
+    import { reactive,onBeforeMount} from 'vue'
 
+    //部门下拉框数据
     const options = [
   {
     value: '部门1',
@@ -19,6 +20,8 @@ import {reactive} from 'vue'
     label: '部门3',
   },
 ]
+
+//收集输入表单数据
   let form = reactive({
     name: '',
     birth: '',
@@ -31,11 +34,65 @@ import {reactive} from 'vue'
     department:'',
     position:''
 })
-  const onSubmit = ()=>{
-    store.onSubmit(form)
+
+    //判断收集的表单是否为空
+    const isEmpty = ()=>{
+        return Object.values(form).every(value => value === '');
     }
-//   const index = +route.query.index
-//   form = {...store.tableData[index]}
+    //提交表单数据
+    const onSubmit = ()=>{
+        if(!isEmpty())
+        {
+            store.onSubmit(form)
+            ElMessage({
+                message: '添加表单信息成功！',
+                type: 'success',
+            })
+        }else{//如果表单数据为空，给予警告
+            ElMessageBox.alert('不能提交空表单！', 'Title', {
+                confirmButtonText: 'OK',
+            })
+
+        }
+    }  
+    //保存修改
+    const saveChange=()=>{
+        ElMessageBox.confirm(
+            '确认修改吗?',
+            'Warning',
+            {
+                confirmButtonText: '确认',
+                cancelButtonText: '取消',
+                type: 'warning',
+            }
+            )
+            .then(() => {
+                store.saveChange(form,+route.query.index)
+                ElMessage({
+                 type: 'success',
+                 message: '修改成功',
+                })
+            })
+            .catch(() => {
+                ElMessage({
+                    type: 'info',
+                    message: '取消修改',
+                })
+            })
+       
+    }
+    //取消操作，把表单内容置空
+    const cancel=()=>{
+        Object.keys(form).forEach(key => {
+             form[key] = '';
+        });
+    }
+    //挂载前加载数据
+    onBeforeMount(()=>{
+        const index = +route.query.index
+        Object.assign(form,store.tableData[index])
+    })
+  
 </script>
 
 <template>
@@ -104,8 +161,11 @@ import {reactive} from 'vue'
                 <el-input v-model="form.position"/>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="onSubmit">Create</el-button>
-                <el-button>Cancel</el-button>
+                <template #default="scope">
+                    <el-button type="primary" @click="onSubmit">新增</el-button>
+                    <el-button type="primary" @click="saveChange">保存修改</el-button>
+                    <el-button @click="cancel">取消/置空</el-button>
+                </template>
             </el-form-item>
         </el-form>
     </el-card>

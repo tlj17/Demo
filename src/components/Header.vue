@@ -1,6 +1,7 @@
 <template>
+    <!-- 标题 -->
     <div class="header">
-        <span>人事信息管理</span>
+    人事信息管理
     </div>
     
 </template>
@@ -8,14 +9,12 @@
 <style lang="less" scoped>
     .header{
         width: 100%;
-        height: 90px;
-        background-color: rgb(149, 199, 245);
+        height: 100%;
+        background-color: rgb(175, 212, 247);
         text-align: center;
-        line-height: 90px;
-        span{
-            font-size: 30px;
-           color: rgb(224, 210, 210);
-        }
+        font-size: 30px;
+        color: rgb(183, 172, 172);
+        line-height: 60px;
     }
     
 </style>

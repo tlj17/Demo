@@ -8,6 +8,9 @@ export const useTableStore = defineStore('table', {
     onSubmit(data) {
       this.tableData.push(data) 
     },
+    saveChange(data,index){
+      this.tableData[index] = data
+    }
     
   },
 });

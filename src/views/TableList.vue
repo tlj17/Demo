@@ -4,12 +4,17 @@
     const router = useRouter()
     const store = useTableStore()
     let tableData = store.tableData
+    //删除数据
     const deleteRow = (index) => {
-        // console.log(index);
         tableData.splice(index, 1)
     }
+    //跳转查看内容
     const viewInfo = (index)=>{
      router.push(`/view/${index}`)
+    }
+    //跳转编辑表单
+    const editInfo = (index)=>{
+        router.push({path:'/input',query:{index}})
     }
     
 </script>
@@ -26,9 +31,10 @@
         <el-table-column prop="startDate" label="入职日期" width="150" />
         <el-table-column prop="department" label="所在部门" width="150" />
         <el-table-column prop="position" label="职位" width="200" />
-        <el-table-column fixed="right"  width="120">
+        <el-table-column fixed="right"  width="180">
             <template #default="scope">
                 <el-button link type="primary" size="small" @click="viewInfo(scope.$index)"><el-icon><View /></el-icon>查看</el-button>
+                <el-button link type="primary" size="small" @click="editInfo(scope.$index)"><el-icon><Delete /></el-icon>编辑</el-button>
                 <el-button link type="primary" size="small" @click="deleteRow(scope.$index)"><el-icon><Delete /></el-icon>删除</el-button>
       </template>
         </el-table-column>
