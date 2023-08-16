@@ -4,6 +4,8 @@
     let store = useTableStore()
     const route=useRoute()
     import { reactive,onBeforeMount} from 'vue'
+    import {debounce} from 'npm_debounceandtrottle_demo'
+    import {throttle} from 'npm_debounceandtrottle_demo'
 
     //部门下拉框数据
     const options = [
@@ -48,13 +50,16 @@
                 message: '添加表单信息成功！',
                 type: 'success',
             })
+            console.log("新增成功");
         }else{//如果表单数据为空，给予警告
             ElMessageBox.alert('不能提交空表单！', 'Title', {
                 confirmButtonText: 'OK',
             })
 
         }
-    }  
+    } 
+    const submit_debounce = debounce(onSubmit,3000) 
+    const submit_throttle = throttle(onSubmit,3000)
     //保存修改
     const saveChange=()=>{
         ElMessageBox.confirm(
@@ -162,7 +167,7 @@
             </el-form-item>
             <el-form-item>
                 <template #default="scope">
-                    <el-button type="primary" @click="onSubmit">新增</el-button>
+                    <el-button type="primary" @click="submit_throttle">新增</el-button>
                     <el-button type="primary" @click="saveChange">保存修改</el-button>
                     <el-button @click="cancel">取消/置空</el-button>
                 </template>
