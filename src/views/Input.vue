@@ -1,11 +1,12 @@
 <script setup>
-    import {useTableStore} from '../store/index.js'
+    import { inputData } from '../api';
+    // import {useTableStore} from '../store/index.js'
     import {useRoute} from 'vue-router'
-    let store = useTableStore()
+    // let store = useTableStore()
     const route=useRoute()
     import { reactive,onBeforeMount} from 'vue'
-    import {debounce} from 'npm_debounceandtrottle_demo'
-    import {throttle} from 'npm_debounceandtrottle_demo'
+    import {debounce,throttle} from 'npm_debounceandtrottle_demo'
+    import { reqViewInfo,editInfo} from '../api';
 
     //部门下拉框数据
     const options = [
@@ -45,12 +46,14 @@
     const onSubmit = ()=>{
         if(!isEmpty())
         {
-            store.onSubmit(form)
+            //提交表单数据至服务端保存
+            inputData(form)
+            // store.onSubmit(form)
             ElMessage({
                 message: '添加表单信息成功！',
                 type: 'success',
             })
-            console.log("新增成功");
+            cancel()
         }else{//如果表单数据为空，给予警告
             ElMessageBox.alert('不能提交空表单！', 'Title', {
                 confirmButtonText: 'OK',
@@ -72,11 +75,13 @@
             }
             )
             .then(() => {
-                store.saveChange(form,+route.query.index)
+                // store.saveChange(form,+route.query.index)
+                editInfo(form.employeeId,form)
                 ElMessage({
                  type: 'success',
                  message: '修改成功',
                 })
+                cancel()
             })
             .catch(() => {
                 ElMessage({
@@ -93,9 +98,22 @@
         });
     }
     //挂载前加载数据
+    // onBeforeMount(()=>{
+    //     const index = +route.query.index
+    //     Object.assign(form,store.tableData[index])
+    // })
+    
+    async function getViewInfo() {
+        let employeeId = route.query.employeeId
+        let result = await reqViewInfo(employeeId); 
+        if(result.code == 200)
+        {
+          Object.assign(form,result.data)
+        }
+    }
+
     onBeforeMount(()=>{
-        const index = +route.query.index
-        Object.assign(form,store.tableData[index])
+       getViewInfo()
     })
   
 </script>

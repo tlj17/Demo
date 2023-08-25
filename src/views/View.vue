@@ -1,20 +1,35 @@
 <script setup>
     import { useTableStore } from '../store/index.js';
     import { useRoute ,useRouter} from 'vue-router';
-    let store = useTableStore()
+    import { reqViewInfo } from '../api';
+    import {reactive,ref,nextTick} from 'vue'
+    // let store = useTableStore()
     const route = useRoute()
     const router = useRouter()
 
-    const index = +route.params.index
-    const data = store.tableData[index]||[]
+    const employeeId = route.params.employeeId
+    // const data = store.tableData[index]||[]
+    let data = reactive({}) 
+    let values = ref([])
+  
+    async function getViewInfo() {
+        let result = await reqViewInfo(employeeId); 
+        if(result.code == 200)
+        {
+          data = result.data 
+          values.value =  Object.values(data)
+        }
+    }
+   
+    async function main() {
+        await getViewInfo(); 
+    }
+
+    main(); 
+
     //分别获取对象的键和值，方便遍历渲染表格
     const keys = ['姓名','生日','性别','联系电话','邮箱','身份证号','工号','入职日期','所属部门','职位']
-    const values =  Object.values(data)
-
-    //跳转编辑表单
-    const goEditPage = (index)=>{
-      router.push({path:'/input',query:{index}})
-    }
+    
     //返回列表页
     const returnList = () =>{
       router.push('/tablelist')
@@ -39,7 +54,6 @@
   
   </el-descriptions>
     <el-button type="primary" plain @click="returnList">返回列表</el-button>
-    <el-button type="primary" plain @click="goEditPage(index)">编辑</el-button>
   </div>
   
 </template>

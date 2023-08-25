@@ -1,22 +1,53 @@
 <script setup>
     import { useTableStore } from '../store/index.js';
     import { useRouter } from 'vue-router';
+    import { reqTableList,deleteInfo } from '../api';
+    import { ref } from 'vue'
     const router = useRouter()
-    const store = useTableStore()
-    let tableData = store.tableData
+    // const store = useTableStore()
+     
+    let tableData = ref([])
+    async function gettableData(){
+        try{
+            let result = await reqTableList()
+            if(result.code == 200)
+            {
+                tableData.value = result.data
+            }
+        }catch(err){
+            console.log(err);
+        }
+    }  
+
+    async function main() {
+        await gettableData(); 
+        // console.log(tableData.value);
+    }
+
+    main(); 
+
+    // let tableData = store.tableData
     //删除数据
-    const deleteRow = (index) => {
-        tableData.splice(index, 1)
+    // const deleteRow = (index) => {
+    //     tableData.value.splice(index, 1)
+    // }
+
+    //删除数据
+    const deleteRow = (employeeId)=>{
+        deleteInfo(employeeId)
+        gettableData()
     }
+
     //跳转查看内容
-    const viewInfo = (index)=>{
-     router.push(`/view/${index}`)
+    const viewInfo = (employeeId)=>{
+     router.push(`/view/${employeeId}`)
     }
+
     //跳转编辑表单
-    const editInfo = (index)=>{
-        router.push({path:'/input',query:{index}})
+    const editInfo = (employeeId)=>{
+        router.push({path:'/input',query:{employeeId}})
     }
-    
+
 </script>
 
 <template>
@@ -33,9 +64,9 @@
         <el-table-column prop="position" label="职位" width="200" />
         <el-table-column fixed="right"  width="180">
             <template #default="scope">
-                <el-button link type="primary" size="small" @click="viewInfo(scope.$index)"><el-icon><View /></el-icon>查看</el-button>
-                <el-button link type="primary" size="small" @click="editInfo(scope.$index)"><el-icon><Delete /></el-icon>编辑</el-button>
-                <el-button link type="primary" size="small" @click="deleteRow(scope.$index)"><el-icon><Delete /></el-icon>删除</el-button>
+                <el-button link type="primary" size="small" @click="viewInfo(scope.row.employeeId)"><el-icon><View /></el-icon>查看</el-button>
+                <el-button link type="primary" size="small" @click="editInfo(scope.row.employeeId)"><el-icon><Delete /></el-icon>编辑</el-button>
+                <el-button link type="primary" size="small" @click="deleteRow(scope.row.employeeId)"><el-icon><Delete /></el-icon>删除</el-button>
       </template>
         </el-table-column>
   </el-table>
